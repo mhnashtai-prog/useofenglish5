@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>USE OF ENGLISH — C1 Advanced (Cambridge style) — Interactive</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg-1:#071227; --bg-2:#0b1e2b;
+    --accent-1:#8be1c6; --accent-2:#8bd0ff;
+    --gold:#ffd27a;
+    --card-radius:14px;
+    --ui-shadow: 0 26px 70px rgba(2,6,23,0.6);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; padding:22px;
+    font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+    background:
+      radial-gradient(800px 360px at 12% 12%, rgba(139,208,255,0.03), transparent 6%),
+      linear-gradient(180deg,var(--bg-1),var(--bg-2));
+    color:#eefaf6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Outer layout */
+  .wrap{
+    width:min(1200px,96vw); height:min(920px,94vh); margin:0 auto;
+    border-radius:16px; padding:18px; display:grid; grid-template-columns:360px 1fr; gap:18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));
+    box-shadow:var(--ui-shadow);
+    overflow:hidden;
+  }
+
+  /* LEFT MENU */
+  .menu{ padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.03); background: rgba(255,255,255,0.007) }
+  .title h1{ margin:0; font-family:"Playfair Display", serif; font-size:20px }
+  .title p{ margin:6px 0 0 0; color:rgba(230,238,246,0.75); font-size:13px }
+
+  .tiles{ margin-top:14px; display:grid; gap:10px }
+  .tile{
+    display:flex; gap:12px; align-items:center; padding:12px; border-radius:12px; cursor:pointer;
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s;
+    border:1px solid rgba(255,255,255,0.03); background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.005));
+  }
+  .tile:hover{ transform: translateY(-6px); box-shadow: 0 18px 38px rgba(2,6,23,0.4); border-color: rgba(139,208,255,0.12) }
+  .icon{ width:58px; height:58px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03) }
+
+  .note{ margin-top:12px; color:rgba(230,238,246,0.72); font-size:13px }
+
+  /* RIGHT CONTENT */
+  .content{ padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.03); background: rgba(255,255,255,0.007); overflow:auto; position:relative }
+  .header{ display:flex; justify-content:space-between; align-items:center; gap:12px }
+  .header-left h2{ margin:0; font-family:"Playfair Display",serif; font-size:20px }
+  .header-left p{ margin:4px 0 0 0; color:rgba(230,238,246,0.72); font-size:13px }
+
+  .panel{ margin-top:12px; padding:14px; border-radius:12px; background: rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.02) }
+
+  /* question card */
+  .qcard{ padding:16px; border-radius:12px; min-height:180px; display:flex; flex-direction:column; gap:12px }
+  .q-idx{ color:rgba(230,238,246,0.7); font-size:13px }
+  .sentence{ font-size:18px; color:#f8fff8; line-height:1.55 }
+  .options{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px }
+  .opt{ padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03); background: rgba(255,255,255,0.01); cursor:pointer; }
+  .opt:hover{ transform: translateY(-6px); box-shadow:0 12px 30px rgba(2,6,23,0.25) }
+  .opt.selected{ outline:3px solid rgba(139,208,255,0.12); background: rgba(139,208,255,0.03) }
+
+  .bottom{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:10px }
+  .progress{ height:10px; background: rgba(255,255,255,0.03); border-radius:12px; overflow:hidden; width:45% }
+  .progress > i{ display:block; height:100%; width:0; background: linear-gradient(90deg,var(--accent-1),var(--accent-2)); transition:width .45s cubic-bezier(.2,.9,.3,1) }
+
+  input.gap, input.word, input.trans { width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.01); color:#f7fff8; font-size:15px }
+
+  .btn{ padding:10px 14px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); cursor:pointer; font-weight:700; color:#ecfff6 }
+  .btn:hover{ transform: translateY(-4px); box-shadow: 0 14px 36px rgba(2,6,23,0.35) }
+
+  /* score card */
+  .score-card{ position:fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(.98); width:min(720px,94%); border-radius:14px; padding:18px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); box-shadow:0 26px 70px rgba(2,6,23,0.6); z-index:90; display:none; flex-direction:column; align-items:center; gap:12px }
+  .score-card.show{ display:flex; animation:pop .36s cubic-bezier(.2,.9,.3,1) forwards }
+  @keyframes pop{ from{ opacity:0; transform:translate(-50%,-50%) scale(.96) } to{ opacity:1; transform:translate(-50%,-50%) scale(1) } }
+  .score-big{ font-size:56px; font-family:"Playfair Display", serif; font-weight:700 }
+  .small-muted{ color:rgba(230,238,246,0.72); font-size:13px }
+  .answers-list{ width:100%; max-height:320px; overflow:auto; padding:10px; border-radius:10px; background: rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.02) }
+
+  /* responsive */
+  @media (max-width:980px){
+    .wrap{ grid-template-columns:1fr; height:auto; padding:12px }
+    .menu{ order:2 } .content{ order:1 }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap" role="application" aria-label="Use of English C1 interactive">
+    <!-- LEFT -->
+    <aside class="menu" aria-label="Exercise menu">
+      <div class="title">
+        <h1>USE OF ENGLISH <small style="font-size:12px; color:var(--gold); margin-left:8px">C1</small></h1>
+        <p>Exam-accurate Cambridge-style practice — friendly UI for learners</p>
+      </div>
+
+      <div class="tiles" role="list">
+        <div class="tile" role="listitem" tabindex="0" data-target="mc">
+          <div class="icon">A</div>
+          <div><strong>Multiple Choice</strong><div style="font-size:13px; color:rgba(230,238,246,0.72)">12 items — lexical and grammatical contrasts</div></div>
+        </div>
+
+        <div class="tile" role="listitem" tabindex="0" data-target="gap">
+          <div class="icon">B</div>
+          <div><strong>Open Cloze (Gap-fill)</strong><div style="font-size:13px; color:rgba(230,238,246,0.72)">8 grammar blanks in a ~170-word text</div></div>
+        </div>
+
+        <div class="tile" role="listitem" tabindex="0" data-target="word">
+          <div class="icon">C</div>
+          <div><strong>Word Formation</strong><div style="font-size:13px; color:rgba(230,238,246,0.72)">8 sentences: derive the correct form</div></div>
+        </div>
+
+        <div class="tile" role="listitem" tabindex="0" data-target="trans">
+          <div class="icon">D</div>
+          <div><strong>Sentence Transformation</strong><div style="font-size:13px; color:rgba(230,238,246,0.72)">6 prompts — use the word (3–5 words)</div></div>
+        </div>
+      </div>
+
+      <div class="note">One mark per correct answer. Answers and short explanations appear at the end. Click any tile to start — RETURN TO MENU and NEXT are always available.</div>
+    </aside>
+
+    <!-- RIGHT -->
+    <main class="content" id="content" aria-live="polite">
+      <div class="header">
+        <div class="header-left">
+          <h2 id="title">Welcome</h2>
+          <p id="subtitle" class="small-muted">Choose a section to begin. Content follows the Cambridge C1 Advanced handbook patterns.</p>
+        </div>
+        <div>
+          <button class="btn" id="btnReturn" style="display:none">RETURN TO MENU</button>
+        </div>
+      </div>
+
+      <div id="main" class="panel" style="margin-top:12px;">
+        <div style="text-align:center; padding:22px;">
+          <h3 style="font-family:'Playfair Display', serif; margin:0 0 8px 0;">Authentic C1 practice — exam-ready</h3>
+          <p class="small-muted" style="max-width:72ch; margin:12px auto;">Click <strong>Multiple Choice</strong> to start a 12-item set. Open Cloze contains 8 grammar-only gaps (not vocabulary). Word Formation and Transformation are Cambridge-style with full contexts and strict answer-length rules.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Score Card -->
+  <div class="score-card" id="scoreCard" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="score-big" id="scoreNumber">0 / 0</div>
+    <div class="small-muted" id="scoreText">0% — Keep going!</div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn" id="revealBtn">Show answers & explanations</button>
+      <button class="btn" id="closeScore">Close</button>
+    </div>
+    <div class="answers-list" id="answersList" style="display:none"></div>
+  </div>
+
+<script>
+/* ===========================
+   Cambridge-style DATA (editable)
+   =========================== */
+
+/* MULTIPLE CHOICE — 12 items */
+const MULTIPLE_CHOICE = [
+  { s:"Although the proposal sounded promising, the board remained ___ about its chances of success.", opts:["optimistic","skeptical","convinced","receptive"], c:1,
+    ex:"'Skeptical' collocates naturally here and contrasts with 'sounded promising'." },
+
+  { s:"The researcher's findings appear ___ with earlier studies, which strengthens the theory.", opts:["incompatible","congruent","discrepant","irrelevant"], c:1,
+    ex:"'Congruent with' = in agreement; correct collocation." },
+
+  { s:"The minister's comments were widely ___ as an attempt to deflect criticism.", opts:["interpreted","discouraged","rehearsed","intimated"], c:0,
+    ex:"'Interpreted as' is the required collocation." },
+
+  { s:"If we had known about the delay, we ___ our schedule accordingly.", opts:["would adjust","adjusted","would have adjusted","had adjusted"], c:2,
+    ex:"Third conditional: 'If we had known... we would have adjusted'." },
+
+  { s:"The committee produced a ___ appraisal of the project's economic viability.", opts:["balanced","partial","favourable","simplistic"], c:0,
+    ex:"'Balanced appraisal' is a natural collocation." },
+
+  { s:"She conducted the interview ___ a manner that immediately put the candidate at ease.", opts:["in","into","with","by"], c:0,
+    ex:"'In a manner' (or 'in a way') is the correct preposition." },
+
+  { s:"The company has committed to reducing emissions, ___ it may require major investment.", opts:["unless","although","whereas","provided"], c:1,
+    ex:"'Although it may require...' expresses concession." },
+
+  { s:"The manager demanded an explanation, but the employee remained ___.", opts:["contrite","adamant","resigned","eloquent"], c:1,
+    ex:"'Remained adamant' = persisted in the position." },
+
+  { s:"There has been a ___ shift in public attitudes towards remote working.", opts:["marginal","substantial","fractional","superficial"], c:1,
+    ex:"'Substantial shift' is the expected collocation." },
+
+  { s:"Having been warned repeatedly, the team ___ responsibility for the oversight.", opts:["accepted","refused","repudiated","evaded"], c:0,
+    ex:"'Accepted responsibility' collocates naturally." },
+
+  { s:"The theory, while elegant, fails to ___ the empirical evidence now available.", opts:["accommodate","exclude","repel","postpone"], c:0,
+    ex:"'Accommodate the evidence' means to make compatible with data." },
+
+  { s:"There is a danger that short-term politics will influence decisions to the ___ of long-term sustainability.", opts:["benefit","detriment","advantage","rest"], c:1,
+    ex:"'To the detriment of' is the idiom meaning harming long-term aims." }
+];
+
+/* OPEN CLOZE: single text (~170 words) with 8 blanks (grammar-only).
+   Blanks represented by '___' in the text. answers[] contains arrays of accepted normalized answers.
+*/
+const GAP_TEXT = {
+  text: `For many urban planners, the pandemic was not so much a crisis ___ an opportunity to rethink city life. Commuting patterns changed, and businesses that had ___ relied on office footfall suddenly found their models unsustainable. In response, municipal authorities began to experiment ___ adaptive measures, such as reallocating street space for pedestrians and cyclists. Residents, ___, welcomed quieter streets but also expressed concern about local services. Had planners consulted communities earlier, the rollout might have proceeded ___ friction. Nonetheless, the experience showed that where public will exists, change can happen far more swiftly ___ previously supposed. The challenge now is to consolidate the gains without undermining economic recovery, ___ the temptation to revert to old habits remains strong.`,
+  answers:[
+    ["rather than","than"],                  // 1
+    ["previously","formerly","earlier"],     // 2
+    ["with"],                                // 3 ('experiment with')
+    ["however","meanwhile"],                 // 4
+    ["without"],                             // 5
+    ["than"],                                // 6 ('than previously supposed')
+    ["than","than was"],                     // 7 (structure: 'more swiftly than previously supposed')
+    ["unless"]                               // 8
+  ],
+  explain:[
+    "Structure: 'not so much ... as' / 'rather than' — expresses contrast.",
+    "Past perfect context: 'had previously relied'.",
+    "'Experiment with' is the correct phrasal collocation.",
+    "'However' is the typical contrastive linker here.",
+    "'Without friction' = with no friction; 'without' is core.",
+    "'... more swiftly than previously supposed' — comparative 'than'.",
+    "Comparative phrase linking 'swiftly' with prior supposition.",
+    "'Unless the temptation ... remains strong' (negative conditional)."
+  ]
+};
+
+/* WORD FORMATION: 8 full-sentence contexts. Each item has sentence with '____' where answer goes, base, accepted answers */
+const WORD_FORM = [
+  { sentence:"The new policy led to a dramatic ____ in commuter numbers.", base:"REDUCE", answers:["reduction"], explain:"Noun form 'reduction'." },
+  { sentence:"Her response was marked by admirable ____ even under pressure.", base:"CALM", answers:["calmness"], explain:"'Calmness' (noun) fits formal register." },
+  { sentence:"Their ____ approach to deadlines resulted in missed milestones.", base:"LAX", answers:["laxity"], explain:"'Laxity' (formal noun) expected." },
+  { sentence:"This measure is unlikely to be ____ while funding is restricted.", base:"IMPLEMENT", answers:["implemented"], explain:"'Implemented' (past participle as adjective) fits." },
+  { sentence:"We must prioritise ____ rather than short-term gains.", base:"SUSTAIN", answers:["sustainability"], explain:"'Sustainability' is the correct noun." },
+  { sentence:"A careful ____ of the figures revealed an unexpected trend.", base:"ANALYSE", answers:["analysis"], explain:"'Analysis' is the noun derived from 'analyse'." },
+  { sentence:"The committee demanded a ____ justification for the expenditure.", base:"CONCRETE", answers:["concrete"], explain:"'Concrete justification' (adjective) is idiomatic." },
+  { sentence:"The organisation responded ____ to the findings.", base:"SWIFT", answers:["swiftly"], explain:"Adverb 'swiftly' required." }
+];
+
+/* SENTENCE TRANSFORMATION: 6 items.
+   Each has origin (teacher ref), prompt (shown with ___ placeholder), keys: accepted normalized answers,
+   explanation hint.
+   Expected student answer length: 3 to 5 words (checked).
+*/
+const TRANSFORM = [
+  { origin:"She needn't have told him everything; she chose not to.",
+    prompt:"She needn't have ___ the details. (TOLD)",
+    keys:["told him all the details","told him everything","told him all"], explain:"Accept natural variations using 'told' + direct object." },
+
+  { origin:"It was only when the results arrived that they realised the problem's scale.",
+    prompt:"Only when the results ___ did they realise the scale. (ARRIVED)",
+    keys:["had arrived","arrived"], explain:"Inversion structure 'Only when... did they...' — 'had arrived' or 'arrived' accepted." },
+
+  { origin:"All staff were required to comply with the new procedures.",
+    prompt:"All staff were required to ___ with procedures. (COMPLY)",
+    keys:["comply with procedures","comply fully with procedures","comply strictly with procedures"], explain:"Natural 3–5 word variations using 'comply'." },
+
+  { origin:"She regretted accepting the position the company offered.",
+    prompt:"She regretted ___ the position. (ACCEPT)",
+    keys:["accepting the position","having accepted the position","accepting the job"], explain:"Gerund forms accepted (perfect gerund allowed)." },
+
+  { origin:"They postponed the meeting until the consultant arrived.",
+    prompt:"They waited to ___ the consultant. (MEET)",
+    keys:["meet the consultant","meet with the consultant","meet the consultant"], explain:"Accept 'meet' or 'meet with' constructions." },
+
+  { origin:"I was surprised how quickly the week had passed.",
+    prompt:"I was surprised ___ how quickly the week had passed. (AT)",
+    keys:["at how quickly the week","at how quickly the week had passed","at how quickly the week had gone"], explain:"'At how quickly...' constructions accepted." }
+];
+
+/* ===========================
+   App state & DOM refs
+   =========================== */
+const tiles = document.querySelectorAll('.tile');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const main = document.getElementById('main');
+const btnReturn = document.getElementById('btnReturn');
+
+const scoreCard = document.getElementById('scoreCard');
+const scoreNumber = document.getElementById('scoreNumber');
+const scoreText = document.getElementById('scoreText');
+const answersList = document.getElementById('answersList');
+const revealBtn = document.getElementById('revealBtn');
+const closeScore = document.getElementById('closeScore');
+
+let current = null;
+let mcState = { idx:0, answers: Array(MULTIPLE_CHOICE.length).fill(null) };
+let gapState = { answers: Array(GAP_TEXT.answers.length).fill(''), idx:0 };
+let wordState = { answers: Array(WORD_FORM.length).fill(''), idx:0 };
+let transState = { answers: Array(TRANSFORM.length).fill(''), idx:0 };
+
+/* ===========================
+   Utilities
+   =========================== */
+function clearMain(){ main.innerHTML = ''; }
+function normalize(s){ return (s||'').toString().trim().toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"]/g,"").replace(/\s+/g,' ').trim(); }
+function showMenu(){
+  current = null; btnReturn.style.display='none'; hideScore();
+  title.textContent = 'Welcome'; subtitle.textContent = 'Pick a section to begin. Content follows Cambridge C1 Advanced patterns.';
+  clearMain();
+  main.innerHTML = `<div style="text-align:center; padding:22px;"><h3 style="font-family:'Playfair Display', serif; margin:0 0 8px 0;">Exam-accurate C1 practice</h3><p class="small-muted" style="max-width:72ch; margin:12px auto;">Multiple Choice (12), Open Cloze (8 grammar blanks), Word Formation (8), Sentence Transformation (6). One mark per correct answer.</p></div>`;
+}
+
+/* ===========================
+   Multiple Choice
+   =========================== */
+function startMC(){
+  current = 'mc'; mcState.idx = 0; mcState.answers = Array(MULTIPLE_CHOICE.length).fill(null);
+  btnReturn.style.display = 'inline-flex';
+  title.textContent = 'Multiple Choice — 12 items';
+  subtitle.textContent = 'Choose the best option (A–D). 1 mark each.';
+  renderMC();
+}
+function renderMC(){
+  const i = mcState.idx; const q = MULTIPLE_CHOICE[i];
+  clearMain();
+  const wrap = document.createElement('div'); wrap.className = 'qcard';
+  wrap.innerHTML = `<div class="q-idx">Question ${i+1} of ${MULTIPLE_CHOICE.length}</div>
+    <div class="sentence">${q.s.replace('___','<strong style="text-decoration:underline">______</strong>')}</div>
+    <div class="options" role="list">${q.opts.map((o,idx)=>`<div class="opt" data-opt="${idx}" tabindex="0"><strong>${String.fromCharCode(65+idx)}.</strong> ${o}</div>`).join('')}</div>
+    <div class="bottom"><div style="display:flex; gap:8px;"><button class="btn" id="prevMC" ${i===0?'disabled':''}>Previous</button><button class="btn" id="nextMC">Next</button></div><div class="progress"><i style="width:${Math.round((i/MULTIPLE_CHOICE.length)*100)}%"></i></div></div>`;
+  main.appendChild(wrap);
+
+  const opts = main.querySelectorAll('.opt');
+  opts.forEach(el=>{ el.addEventListener('click', ()=>{
+      const sel = Number(el.dataset.opt); mcState.answers[i] = sel; opts.forEach(x=>x.classList.remove('selected')); el.classList.add('selected');
+    }); el.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' ') { e.preventDefault(); el.click(); }}); });
+
+  // restore selection
+  const prev = mcState.answers[i];
+  if(prev !== null){ const el = main.querySelector(`.opt[data-opt="${prev}"]`); if(el) el.classList.add('selected'); }
+
+  document.getElementById('prevMC').onclick = ()=>{ if(i>0){ mcState.idx--; renderMC(); } };
+  document.getElementById('nextMC').onclick = ()=>{ if(i === MULTIPLE_CHOICE.length - 1) finishMC(); else { mcState.idx++; renderMC(); } };
+}
+function finishMC(){
+  const total = MULTIPLE_CHOICE.length; let score = 0; const items = [];
+  for(let i=0;i<total;i++){
+    const user = mcState.answers[i];
+    const ok = user === MULTIPLE_CHOICE[i].c;
+    if(ok) score++;
+    items.push({ q:i+1, user:user===null?null:String.fromCharCode(65+user), correct:String.fromCharCode(65+MULTIPLE_CHOICE[i].c), explanation:MULTIPLE_CHOICE[i].ex });
+  }
+  showScore(score, total, items);
+}
+
+/* ===========================
+   Open Cloze (Gap-fill)
+   =========================== */
+function startGap(){
+  current = 'gap'; gapState.idx = 0; gapState.answers = Array(GAP_TEXT.answers.length).fill('');
+  btnReturn.style.display = 'inline-flex';
+  title.textContent = 'Open Cloze — grammar-only gaps';
+  subtitle.textContent = 'One ~170-word text with 8 grammar blanks (articles, auxiliaries, prepositions, linkers, modals, comparatives).';
+  renderGap();
+}
+function renderGap(){
+  clearMain();
+  const parts = GAP_TEXT.text.split('___');
+  const container = document.createElement('div'); container.className = 'qcard';
+  let html = `<div class="q-idx">Open Cloze — fill all 8 gaps</div><div style="font-size:15px; line-height:1.6">`;
+  for(let i=0;i<parts.length;i++){
+    html += `<span>${parts[i]}</span>`;
+    if(i < GAP_TEXT.answers.length){
+      html += `<input id="gap-${i}" data-index="${i}" class="gap" placeholder="____" style="width:140px; display:inline-block; margin:0 6px;">`;
+    }
+  }
+  html += `</div><div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;"><div class="small-muted">Answers must be grammatical words/phrases (not general vocabulary).</div><div style="display:flex; gap:8px;"><button class="btn" id="submitGap">Submit</button><button class="btn" id="backGap">RETURN TO MENU</button></div></div>`;
+  container.innerHTML = html; main.appendChild(container);
+
+  // restore saved answers
+  for(let i=0;i<GAP_TEXT.answers.length;i++){
+    const el = document.getElementById(`gap-${i}`); if(el) el.value = gapState.answers[i] || '';
+  }
+  document.getElementById('backGap').onclick = showMenu;
+  document.getElementById('submitGap').onclick = finishGap;
+}
+function finishGap(){
+  const total = GAP_TEXT.answers.length; let score = 0; const items = [];
+  for(let i=0;i<total;i++){
+    const el = document.getElementById(`gap-${i}`);
+    const raw = el ? el.value : '';
+    gapState.answers[i] = raw;
+    const user = normalize(raw);
+    const valids = GAP_TEXT.answers[i].map(x=>normalize(x));
+    const ok = valids.includes(user);
+    if(ok) score++;
+    items.push({ q:i+1, user: raw||null, correct: GAP_TEXT.answers[i].join(' / '), isCorrect: ok, explanation: GAP_TEXT.explain[i] || '' });
+  }
+  showScore(score, total, items);
+}
+
+/* ===========================
+   Word Formation
+   =========================== */
+function startWord(){
+  current = 'word'; wordState.idx = 0; wordState.answers = Array(WORD_FORM.length).fill('');
+  btnReturn.style.display = 'inline-flex';
+  title.textContent = 'Word Formation — contextual sentences';
+  subtitle.textContent = 'Derive the correct form from the given BASE word (shown).';
+  renderWord();
+}
+function renderWord(){
+  const i = wordState.idx; const it = WORD_FORM[i];
+  clearMain();
+  const wrap = document.createElement('div'); wrap.className = 'qcard';
+  wrap.innerHTML = `<div class="q-idx">Item ${i+1} of ${WORD_FORM.length}</div>
+    <div style="display:flex; gap:12px; align-items:flex-start;">
+      <div style="min-width:160px; padding:10px; border-radius:10px; background: rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.02)"><div style="font-size:14px"><strong>BASE: ${it.base}</strong></div></div>
+      <div style="flex:1"><div class="sentence">${it.sentence.replace('____','<strong style="text-decoration:underline">______</strong>')}</div><div style="margin-top:8px"><input id="wordIn" class="word" placeholder="Type the correct form"></div></div>
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px;"><button class="btn" id="prevWord" ${i===0?'disabled':''}>Previous</button><button class="btn" id="nextWord">Next</button></div>`;
+  main.appendChild(wrap);
+
+  const inpt = document.getElementById('wordIn'); inpt.value = wordState.answers[i] || ''; inpt.focus();
+  document.getElementById('prevWord').onclick = ()=>{ wordState.answers[i] = inpt.value; if(i>0){ wordState.idx--; renderWord(); } };
+  document.getElementById('nextWord').onclick = ()=>{ wordState.answers[i] = inpt.value; if(i === WORD_FORM.length - 1) finishWord(); else { wordState.idx++; renderWord(); } };
+  inpt.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('nextWord').click(); });
+}
+function finishWord(){
+  const total = WORD_FORM.length; let score = 0; const items = [];
+  for(let i=0;i<total;i++){
+    const raw = wordState.answers[i] || '';
+    const user = normalize(raw);
+    const valids = WORD_FORM[i].answers.map(x=>normalize(x));
+    const ok = valids.includes(user);
+    if(ok) score++;
+    items.push({ q:i+1, user: raw||null, correct: WORD_FORM[i].answers.join(' / '), isCorrect: ok, explanation: WORD_FORM[i].explain });
+  }
+  showScore(score, total, items);
+}
+
+/* ===========================
+   Sentence Transformation
+   =========================== */
+function startTrans(){
+  current = 'trans'; transState.idx = 0; transState.answers = Array(TRANSFORM.length).fill('');
+  btnReturn.style.display = 'inline-flex';
+  title.textContent = 'Sentence Transformation — 3–5 word answers';
+  subtitle.textContent = 'Use the word given; answers should be 3–5 words; accepted variants included.';
+  renderTrans();
+}
+function renderTrans(){
+  const i = transState.idx; const it = TRANSFORM[i];
+  clearMain();
+  const wrap = document.createElement('div'); wrap.className = 'qcard';
+  wrap.innerHTML = `<div class="q-idx">Task ${i+1} of ${TRANSFORM.length}</div>
+    <div style="color:rgba(230,238,246,0.75); font-size:14px">Original (for reference): <em>${it.origin}</em></div>
+    <div class="sentence" style="margin-top:8px">${it.prompt.replace('___','<strong style="text-decoration:underline">______</strong>')}</div>
+    <div style="margin-top:8px"><input id="transIn" class="trans" placeholder="Type your transformed sentence (3–5 words)"></div>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px;">
+      <button class="btn" id="prevTrans" ${i===0?'disabled':''}>Previous</button>
+      <button class="btn" id="nextTrans">Next</button>
+    </div>`;
+  main.appendChild(wrap);
+
+  const inpt = document.getElementById('transIn'); inpt.value = transState.answers[i] || ''; inpt.focus();
+  document.getElementById('prevTrans').onclick = ()=>{ transState.answers[i] = inpt.value; if(i>0){ transState.idx--; renderTrans(); } };
+  document.getElementById('nextTrans').onclick = ()=>{ transState.answers[i] = inpt.value; if(i === TRANSFORM.length - 1) finishTrans(); else { transState.idx++; renderTrans(); } };
+  inpt.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('nextTrans').click(); });
+}
+function finishTrans(){
+  const total = TRANSFORM.length; let score = 0; const items = [];
+  for(let i=0;i<total;i++){
+    const raw = transState.answers[i] || '';
+    const user = normalize(raw);
+    const words = user.split(' ').filter(Boolean);
+    const lenOK = words.length >=3 && words.length <=5;
+    const valids = TRANSFORM[i].keys.map(k=>normalize(k));
+    let ok = valids.some(v => v && (user === v || user.includes(v) || v.includes(user)));
+    if(ok && !lenOK) ok = false;
+    if(ok) score++;
+    items.push({ q:i+1, user: raw||null, correct: TRANSFORM[i].keys.join(' / '), isCorrect: ok, explanation: TRANSFORM[i].explain });
+  }
+  showScore(score, total, items);
+}
+
+/* ===========================
+   SCORE DISPLAY
+   =========================== */
+function showScore(score, total, items){
+  scoreCard.classList.add('show'); scoreCard.setAttribute('aria-hidden','false');
+  scoreNumber.textContent = `0 / ${total}`; scoreText.textContent = `0% — Well done!`;
+  let frames = 30; let acc = 0; const inc = score/frames; let step = 0;
+  const id = setInterval(()=>{ acc += inc; const v = Math.round(acc); scoreNumber.textContent = `${v} / ${total}`; scoreText.textContent = `${Math.round((v/total)*100)}%`; step++; if(step>=frames){ clearInterval(id); scoreNumber.textContent = `${score} / ${total}`; const pct = Math.round((score/total)*100); scoreText.textContent = `${pct}% — ${pct>=85?'Outstanding!':pct>=65?'Very good':'Review the answers'}` } }, 12);
+
+  answersList.style.display = 'none';
+  answersList.innerHTML = items.map(it => {
+    const user = it.user === null ? '<em>(no answer)</em>' : escapeHtml(it.user);
+    const corr = escapeHtml(it.correct || '');
+    const tick = it.isCorrect ? '✅' : '❌';
+    return `<div style="padding:8px; border-bottom:1px dashed rgba(255,255,255,0.02)"><div><strong>Q${it.q}.</strong> ${tick} Your: <strong>${user}</strong> — Correct: <strong>${corr}</strong></div><div style="color:rgba(230,238,246,0.7); margin-top:6px">${escapeHtml(it.explanation || '')}</div></div>`;
+  }).join('');
+
+  revealBtn.style.display = 'inline-block';
+  revealBtn.onclick = ()=>{ answersList.style.display = 'block'; revealBtn.style.display = 'none'; };
+  closeScore.onclick = ()=>{ hideScore(); };
+}
+function hideScore(){ scoreCard.classList.remove('show'); scoreCard.setAttribute('aria-hidden','true'); answersList.style.display = 'none'; revealBtn.style.display = 'inline-block'; answersList.innerHTML = ''; }
+function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"'`]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'})[ch]); }
+
+/* ============== Wiring ============== */
+tiles.forEach(t => { t.addEventListener('click', ()=>{ const tgt = t.dataset.target; if(tgt==='mc') startMC(); if(tgt==='gap') startGap(); if(tgt==='word') startWord(); if(tgt==='trans') startTrans(); }); t.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' ') { e.preventDefault(); t.click(); } }); });
+btnReturn.onclick = showMenu;
+
+/* init */
+showMenu();
+
+/* accessibility: Escape */
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape'){ if(scoreCard.classList.contains('show')) hideScore(); else showMenu(); } });
+</script>
+</body>
+</html>
